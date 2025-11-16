@@ -105,6 +105,23 @@
 
   @media (max-width: 1100px) { .slide { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 720px) { .slide { grid-template-columns: 1fr; padding: 60px 16px 25px; } .slide-logo { width: 48px; } }
+
+  /* Tambahkan ke style */
+.photo img {
+  transition: transform 0.3s cubic-bezier(.43,2,.19,-0.56), box-shadow 0.3s;
+  cursor: pointer;
+}
+
+.photo img.zoomed {
+  transform: scale(3);
+  z-index: 999;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.36);
+}
+  .quote-card.zoomed {
+  transform: scale(1.1);
+  z-index: 10;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.24);
+}
 </style>
 </head>
 <body>
