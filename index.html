@@ -137,6 +137,25 @@
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSPT-qifQR8XyqXJeZLdgGqqjwM7q-NCTjnT9QBJNtoAdCp6sH6MwIQXGg99yMaualgMMPPg2u6OgzT/pub?gid=0&single=true&output=csv';
 const QUOTES_PER_SLIDE = 6;
 
+  // Zoom-in saat gambar difoto di-klik/tap (toggle zoom)
+document.addEventListener("DOMContentLoaded", function() {
+  document.body.addEventListener('click', function(e) {
+    // Pastikan yang di-klik adalah img di .photo
+    if (e.target.closest('.photo img')) {
+      const img = e.target;
+      img.classList.toggle('zoomed');
+      // Scroll to center (optional, agar gambar zoom ke tengah layar)
+      if (img.classList.contains('zoomed')) {
+        img.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      e.stopPropagation();
+    } else {
+      // Jika click di luar gambar, hilangkan zoom
+      document.querySelectorAll('.photo img.zoomed').forEach(img => img.classList.remove('zoomed'));
+    }
+  });
+});
+  
 // Helpers
 function csvToArray(str,delimiter=",") {
   const rows = str.split("\n").filter(row => row.trim() !== "");
