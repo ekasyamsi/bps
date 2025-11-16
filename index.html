@@ -206,3 +206,17 @@ function setupSlider() {
 </script>
 </body>
 </html>
+
+<audio id="backgroundMusic" src="https://5reismzaf5oers4y.public.blob.vercel-storage.com/WhatsApp%20Audio%202025-11-16%20at%2013.38.14.mpeg" autoplay loop></audio>
+<button onclick="toggleMusic()">Play / Pause Musik</button>
+<script>
+function toggleMusic() {
+  var audio = document.getElementById('backgroundMusic');
+  if (audio.paused) audio.play();
+  else audio.pause();
+}
+window.addEventListener('DOMContentLoaded', function() {
+  var audio = document.getElementById('backgroundMusic');
+  audio.play();
+});
+</script>
