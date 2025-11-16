@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quotes of the Month – BPS SE2026</title>
+<style>
+  :root {
+    --orange-se: #f97316;
+    --dark-blue: #1e3a8a;
+  }
+
+  body {
+    font-family: 'Poppins', Arial, sans-serif;
+    margin: 0;
+    padding: 40px 0;
+    background: linear-gradient(135deg, #f97316, #fb923c);
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  h1 {
+    color: #fff;
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  }
+
+  .slider {
+    width: 95%;
+    max-width: 1180px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.97);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+    border-top: 5px solid var(--orange-se);
+  }
+
+  .slide {
+    display: none;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding: 60px 30px 30px;
+    position: relative;
+    animation: fade 0.8s ease-in-out;
+  }
+  .slide.active { display: grid; }
+
+  .slide-logo {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    width: 60px;
+    opacity: 0.9;
+  }
+  .slide-logo img { width: 100%; height: auto; }
+
+  .quote-card {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: #fff;
+    border-radius: 14px;
+    padding: 12px;
+    border-left: 4px solid var(--dark-blue);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  }
+
+  .photo {
+    flex: 0 0 58px;
+    height: 58px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 2px solid var(--orange-se);
+  }
+  .photo img { width: 100%; height: 100%; object-fit: cover; }
+
+  .quote-content { flex: 1; min-width: 0; }
+  .quote-label { font-size: 10px; text-transform: uppercase; color: var(--dark-blue); font-weight: 700; margin-bottom: 2px; }
+  .quote-text { font-size: 12.5px; color: #1f2937; margin-bottom: 4px; line-height: 1.3; }
+  .quote-author { font-weight: 700; color: var(--dark-blue); font-size: 12.5px; }
+  .quote-role { font-size: 11px; color: #6b7280; }
+
+  @keyframes fade { from {opacity: 0;} to {opacity: 1;} }
+
+  .nav-dots { text-align: center; padding: 10px 0 16px; background: rgba(255,255,255,0.97); border-top: 1px solid #e5e7eb; }
+  .dot { display: inline-block; width: 10px; height: 10px; margin: 4px; background-color: #d1d5db; border-radius: 50%; cursor: pointer; transition: 0.3s; }
+  .dot.active { background-color: var(--dark-blue); }
+
+  .nav-btn {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(30,58,138,0.14); border: none;
+    width: 44px; height: 44px; border-radius: 50%;
+    cursor: pointer; display: grid; place-items: center; transition: 0.25s;
+  }
+  .nav-btn:hover { background: rgba(30,58,138,0.4); }
+  .prev-btn { left: 14px; } .next-btn { right: 14px; }
+  .nav-btn span { font-size: 22px; color: var(--dark-blue); font-weight: bold; }
+
+  @media (max-width: 1100px) { .slide { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 720px) { .slide { grid-template-columns: 1fr; padding: 60px 16px 25px; } .slide-logo { width: 48px; } }
+</style>
+</head>
+<body>
+<h1>✨ Quotes of the Month – Sensus Ekonomi 2026 ✨<br>BPS Kabupaten Karawang</h1>
+
+<div class="slider" id="quoteSlider">
+  <button class="nav-btn prev-btn" id="prevBtn"><span>&lt;</span></button>
+  <button class="nav-btn next-btn" id="nextBtn"><span>&gt;</span></button>
+  <!-- Slides dinamis akan di-generate di sini -->
+</div>
+
+<script>
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSPT-qifQR8XyqXJeZLdgGqqjwM7q-NCTjnT9QBJNtoAdCp6sH6MwIQXGg99yMaualgMMPPg2u6OgzT/pub?gid=0&single=true&output=csv';
+const QUOTES_PER_SLIDE = 9;
+
+// Helpers
+function csvToArray(str,delimiter=",") {
+  const rows = str.split("\n").filter(row => row.trim() !== "");
+  return rows.map(row => row.split(delimiter).map(cell => cell.replace(/^"|"$/g, '')));
+}
+function makeQuoteCard(photo, nama, jabatan, quote) {
+  return `
+    <div class="quote-card">
+      <div class="photo"><img src="${photo}"></div>
+      <div class="quote-content">
+        <div class="quote-label">Quote</div>
+        <div class="quote-text">"${quote}"</div>
+        <div class="quote-author">${nama}</div>
+        <div class="quote-role">${jabatan}</div>
+      </div>
+    </div>
+  `;
+}
+function makeSlide(quotesHTML, isActive = false) {
+  return `
+    <div class="slide${isActive ? ' active' : ''}">
+      <div class="slide-logo">
+        <img src="https://5reismzaf5oers4y.public.blob.vercel-storage.com/Lambang_Badan_Pusat_Statistik_%28BPS%29_Indonesia.svg.png">
+      </div>
+      ${quotesHTML}
+    </div>
+  `;
+}
+function makeDot(isActive = false) {
+  return `<span class="dot${isActive ? ' active' : ''}"></span>`;
+}
+
+// Fetch & render
+fetch(CSV_URL)
+  .then(response => response.text())
+  .then(csvData => {
+    const arr = csvToArray(csvData);
+    const header = arr[0];
+    const rows = arr.slice(1);
+    let slidesHTML = '';
+    let dotsHTML = '';
+    for (let i = 0; i < rows.length; i += QUOTES_PER_SLIDE) {
+      let quotesHTML = '';
+      for (let j = i; j < i + QUOTES_PER_SLIDE && j < rows.length; j++) {
+        // Order: photo,nama,jabatan,quote
+        quotesHTML += makeQuoteCard(rows[j][0], rows[j][1], rows[j][2], rows[j][3]);
+      }
+      slidesHTML += makeSlide(quotesHTML, i === 0);
+      dotsHTML += makeDot(i === 0);
+    }
+    // Insert slides
+    const slider = document.getElementById('quoteSlider');
+    slider.insertAdjacentHTML('afterbegin', slidesHTML);
+    // Insert dots
+    slider.insertAdjacentHTML('beforeend', `<div class="nav-dots" id="navDots">${dotsHTML}</div>`);
+    // Set up navigation
+    setupSlider();
+  });
+
+// Slider navigation (reusable for multi-slide!)
+function setupSlider() {
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('.dot');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  let currentIndex = 0;
+  let autoSlideInterval;
+
+  function showSlide(i) {
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+    dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+  }
+  function nextSlide() { currentIndex = (currentIndex + 1) % slides.length; showSlide(currentIndex); }
+  function prevSlide() { currentIndex = (currentIndex - 1 + slides.length) % slides.length; showSlide(currentIndex); }
+  function startAuto() { autoSlideInterval = setInterval(nextSlide, 9000); }
+  function resetAuto() { clearInterval(autoSlideInterval); startAuto(); }
+
+  nextBtn.onclick = () => { nextSlide(); resetAuto(); }
+  prevBtn.onclick = () => { prevSlide(); resetAuto(); }
+  dots.forEach((d, i) => d.onclick = () => { currentIndex = i; showSlide(i); resetAuto(); });
+
+  showSlide(0);
+  startAuto();
+}
+</script>
+</body>
+</html>
